@@ -34,38 +34,38 @@ const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 const register = async (req, res) => {
     try {
         const { name, email, password } = req.body;
-        
+
         if (!name || !email || !password) {
             return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
         }
-        
+
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             return res.status(400).json({ error: 'Email inválido' });
         }
-        
+
         if (password.length < 6) {
             return res.status(400).json({ error: 'Senha deve ter pelo menos 6 caracteres' });
         }
-        
+
         const [existing] = await pool.query('SELECT id FROM users WHERE email = ?', [email]);
         if (existing.length > 0) {
             return res.status(400).json({ error: 'Email já cadastrado' });
         }
-        
+
         const hashedPassword = await bcrypt.hash(password, 10);
-        
+
         const [result] = await pool.query(
             'INSERT INTO users (name, email, password) VALUES (?, ?, ?)',
             [name, email, hashedPassword]
         );
-        
-        res.status(201).json({ 
+
+        res.status(201).json({
             success: true,
             message: 'Cadastro realizado com sucesso!',
             user: { id: result.insertId, name, email }
         });
-        
+
     } catch (error) {
         console.error('Erro no cadastro:', error);
         res.status(500).json({ error: 'Erro interno do servidor' });
@@ -73,35 +73,35 @@ const register = async (req, res) => {
 };
 
 // =====================================================
-// LOGIN
+// LOGIN (VERSÃO CORRIGIDA COM is_admin)
 // =====================================================
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        
+
         const [users] = await pool.query(
-            'SELECT id, name, email, foto_url, curso, interesses, questionario_respondido FROM users WHERE email = ?',
+            'SELECT id, name, email, foto_url, curso, interesses, questionario_respondido, is_admin FROM users WHERE email = ?',
             [email]
         );
-        
+
         if (users.length === 0) {
             return res.status(401).json({ error: 'Email ou senha inválidos' });
         }
-        
+
         const user = users[0];
         const [passwords] = await pool.query('SELECT password FROM users WHERE email = ?', [email]);
         const isValidPassword = await bcrypt.compare(password, passwords[0].password);
-        
+
         if (!isValidPassword) {
             return res.status(401).json({ error: 'Email ou senha inválidos' });
         }
-        
+
         const token = jwt.sign(
-            { id: user.id, name: user.name, email: user.email },
+            { id: user.id, name: user.name, email: user.email, is_admin: user.is_admin },
             process.env.JWT_SECRET,
             { expiresIn: '7d' }
         );
-        
+
         res.json({
             success: true,
             token,
@@ -112,10 +112,11 @@ const login = async (req, res) => {
                 foto_url: user.foto_url || null,
                 curso: user.curso || null,
                 interesses: user.interesses ? JSON.parse(user.interesses) : [],
-                questionario_respondido: user.questionario_respondido || false
+                questionario_respondido: user.questionario_respondido || false,
+                is_admin: user.is_admin || false
             }
         });
-        
+
     } catch (error) {
         console.error('Erro no login:', error);
         res.status(500).json({ error: 'Erro interno do servidor' });
@@ -123,19 +124,21 @@ const login = async (req, res) => {
 };
 
 // =====================================================
-// PERFIL
+// PERFIL (COM TODOS OS CAMPOS)
 // =====================================================
 const getProfile = async (req, res) => {
     try {
         const [users] = await pool.query(
-            'SELECT id, name, email, foto_url, curso, interesses, questionario_respondido, created_at FROM users WHERE id = ?',
+            `SELECT id, name, email, foto_url, curso, interesses, questionario_respondido, 
+                    is_admin, created_at, telefone, idade, cidade, estado, faculdade, semestre, bio 
+             FROM users WHERE id = ?`,
             [req.user.id]
         );
-        
+
         if (users.length === 0) {
             return res.status(404).json({ error: 'Usuário não encontrado' });
         }
-        
+
         const user = users[0];
         res.json({
             user: {
@@ -146,25 +149,33 @@ const getProfile = async (req, res) => {
                 curso: user.curso || null,
                 interesses: user.interesses ? JSON.parse(user.interesses) : [],
                 questionario_respondido: user.questionario_respondido || false,
-                created_at: user.created_at
+                is_admin: user.is_admin || false,
+                created_at: user.created_at,
+                telefone: user.telefone || null,
+                idade: user.idade || null,
+                cidade: user.cidade || null,
+                estado: user.estado || null,
+                faculdade: user.faculdade || null,
+                semestre: user.semestre || null,
+                bio: user.bio || null
             }
         });
-        
+
     } catch (error) {
         console.error('Erro no perfil:', error);
         res.status(500).json({ error: 'Erro interno' });
     }
 };
-
 // =====================================================
 // MARCAR QUESTIONÁRIO COMO RESPONDIDO
 // =====================================================
 const marcarQuestionario = async (req, res) => {
     try {
         await pool.query('UPDATE users SET questionario_respondido = TRUE WHERE id = ?', [req.user.id]);
+        console.log('✅ Questionário marcado como respondido para usuário:', req.user.id);
         res.json({ success: true, message: 'Questionário marcado como respondido' });
     } catch (error) {
-        console.error('Erro ao marcar questionário:', error);
+        console.error('❌ Erro ao marcar questionário:', error);
         res.status(500).json({ error: 'Erro ao marcar questionário' });
     }
 };
@@ -177,9 +188,9 @@ const uploadFotoPerfil = async (req, res) => {
         if (!req.file) {
             return res.status(400).json({ error: 'Nenhuma imagem enviada' });
         }
-        
+
         const fotoUrl = `/uploads/perfil/${req.file.filename}`;
-        
+
         const [oldFoto] = await pool.query('SELECT foto_url FROM users WHERE id = ?', [req.user.id]);
         if (oldFoto[0] && oldFoto[0].foto_url) {
             const oldPath = path.join(__dirname, '../frontend', oldFoto[0].foto_url);
@@ -187,15 +198,15 @@ const uploadFotoPerfil = async (req, res) => {
                 fs.unlinkSync(oldPath);
             }
         }
-        
+
         await pool.query('UPDATE users SET foto_url = ? WHERE id = ?', [fotoUrl, req.user.id]);
-        
+
         res.json({
             success: true,
             foto_url: fotoUrl,
             message: 'Foto atualizada com sucesso!'
         });
-        
+
     } catch (error) {
         console.error('Erro ao fazer upload:', error);
         res.status(500).json({ error: 'Erro ao fazer upload da foto' });
@@ -203,24 +214,68 @@ const uploadFotoPerfil = async (req, res) => {
 };
 
 // =====================================================
-// ATUALIZAR PERFIL
+// ATUALIZAR PERFIL COMPLETO (COM TODOS OS CAMPOS)
 // =====================================================
 const atualizarPerfil = async (req, res) => {
     try {
-        const { curso, interesses } = req.body;
-        
-        if (curso) {
-            await pool.query('UPDATE users SET curso = ? WHERE id = ?', [curso, req.user.id]);
+        const userId = req.user.id;
+        const {
+            curso,
+            interesses,
+            name,
+            telefone,
+            idade,
+            cidade,
+            estado,
+            faculdade,
+            semestre,
+            bio
+        } = req.body;
+
+        console.log('📝 Recebendo atualização de perfil:', { userId, name, telefone, idade, cidade, estado, faculdade, semestre, bio });
+
+        const updates = [];
+        const values = [];
+
+        if (name !== undefined && name !== '') { updates.push('name = ?'); values.push(name); }
+        if (curso !== undefined) { updates.push('curso = ?'); values.push(curso); }
+        if (interesses !== undefined) { updates.push('interesses = ?'); values.push(JSON.stringify(interesses)); }
+        if (telefone !== undefined) { updates.push('telefone = ?'); values.push(telefone); }
+        if (idade !== undefined && idade !== '') { updates.push('idade = ?'); values.push(parseInt(idade)); }
+        if (cidade !== undefined) { updates.push('cidade = ?'); values.push(cidade); }
+        if (estado !== undefined) { updates.push('estado = ?'); values.push(estado); }
+        if (faculdade !== undefined) { updates.push('faculdade = ?'); values.push(faculdade); }
+        if (semestre !== undefined && semestre !== '') { updates.push('semestre = ?'); values.push(parseInt(semestre)); }
+        if (bio !== undefined) { updates.push('bio = ?'); values.push(bio); }
+
+        if (updates.length === 0) {
+            return res.status(400).json({ error: 'Nenhum dado para atualizar' });
         }
-        
-        if (interesses) {
-            await pool.query('UPDATE users SET interesses = ? WHERE id = ?', [JSON.stringify(interesses), req.user.id]);
-        }
-        
-        res.json({ success: true, message: 'Perfil atualizado com sucesso!' });
-        
+
+        values.push(userId);
+        const query = `UPDATE users SET ${updates.join(', ')} WHERE id = ?`;
+
+        console.log('📝 Query:', query);
+        console.log('📝 Values:', values);
+
+        await pool.query(query, values);
+
+        // Buscar dados atualizados
+        const [updatedUser] = await pool.query(
+            'SELECT id, name, email, foto_url, curso, interesses, questionario_respondido, is_admin, telefone, idade, cidade, estado, faculdade, semestre, bio FROM users WHERE id = ?',
+            [userId]
+        );
+
+        console.log('✅ Perfil atualizado:', updatedUser[0]);
+
+        res.json({
+            success: true,
+            message: 'Perfil atualizado com sucesso!',
+            user: updatedUser[0]
+        });
+
     } catch (error) {
-        console.error('Erro ao atualizar perfil:', error);
+        console.error('❌ Erro ao atualizar perfil:', error);
         res.status(500).json({ error: 'Erro ao atualizar perfil' });
     }
 };
@@ -231,36 +286,36 @@ const atualizarPerfil = async (req, res) => {
 const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
-        
+
         if (!email) {
             return res.status(400).json({ error: 'Email é obrigatório' });
         }
-        
+
         const [users] = await pool.query('SELECT id, name, email FROM users WHERE email = ?', [email]);
-        
+
         if (users.length === 0) {
-            return res.json({ 
-                success: true, 
-                message: 'Se o email estiver cadastrado, você receberá as instruções.' 
+            return res.json({
+                success: true,
+                message: 'Se o email estiver cadastrado, você receberá as instruções.'
             });
         }
-        
+
         const user = users[0];
         const resetToken = crypto.randomBytes(32).toString('hex');
         const resetTokenExpires = new Date(Date.now() + 3600000);
-        
+
         await pool.query(
             'UPDATE users SET reset_token = ?, reset_token_expires = ? WHERE id = ?',
             [resetToken, resetTokenExpires, user.id]
         );
-        
+
         await emailService.sendResetPasswordEmail(user.email, user.name, resetToken);
-        
-        res.json({ 
-            success: true, 
-            message: 'Se o email estiver cadastrado, você receberá as instruções.' 
+
+        res.json({
+            success: true,
+            message: 'Se o email estiver cadastrado, você receberá as instruções.'
         });
-        
+
     } catch (error) {
         console.error('Erro no forgot password:', error);
         res.status(500).json({ error: 'Erro ao processar solicitação' });
@@ -270,36 +325,36 @@ const forgotPassword = async (req, res) => {
 const resetPassword = async (req, res) => {
     try {
         const { token, newPassword } = req.body;
-        
+
         if (!token || !newPassword) {
             return res.status(400).json({ error: 'Token e nova senha são obrigatórios' });
         }
-        
+
         if (newPassword.length < 6) {
             return res.status(400).json({ error: 'Senha deve ter pelo menos 6 caracteres' });
         }
-        
+
         const [users] = await pool.query(
             `SELECT * FROM users WHERE reset_token = ? AND reset_token_expires > NOW()`,
             [token]
         );
-        
+
         if (users.length === 0) {
             return res.status(400).json({ error: 'Token inválido ou expirado' });
         }
-        
+
         const user = users[0];
         const hashedPassword = await bcrypt.hash(newPassword, 10);
-        
+
         await pool.query(
             `UPDATE users SET password = ?, reset_token = NULL, reset_token_expires = NULL WHERE id = ?`,
             [hashedPassword, user.id]
         );
-        
+
         await emailService.sendPasswordChangedEmail(user.email, user.name);
-        
+
         res.json({ success: true, message: 'Senha alterada com sucesso!' });
-        
+
     } catch (error) {
         console.error('Erro no reset password:', error);
         res.status(500).json({ error: 'Erro ao redefinir senha' });

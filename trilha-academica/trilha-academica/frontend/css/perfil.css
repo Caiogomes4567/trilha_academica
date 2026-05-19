@@ -9,7 +9,6 @@ body {
   background: #f3f4f6;
 }
 
-/* HEADER */
 .header {
   background: #16a34a;
   padding: 15px 40px;
@@ -18,19 +17,6 @@ body {
   align-items: center;
   color: white;
   flex-wrap: wrap;
-}
-
-.logo {
-  font-size: 24px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.logo img {
-  height: 50px;
-  vertical-align: middle;
 }
 
 nav {
@@ -77,7 +63,6 @@ nav a:hover {
   background: #15803d;
 }
 
-/* CONTAINER PRINCIPAL */
 .container {
   display: flex;
   max-width: 1400px;
@@ -86,13 +71,12 @@ nav a:hover {
   padding: 0 20px;
 }
 
-/* SIDEBAR */
 .sidebar {
   background: white;
   border-radius: 20px;
   padding: 25px;
   width: 280px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   height: fit-content;
 }
 
@@ -144,7 +128,6 @@ nav a:hover {
   color: white;
 }
 
-/* CONTEÚDO PRINCIPAL */
 .content {
   flex: 1;
 }
@@ -160,7 +143,6 @@ nav a:hover {
   margin-bottom: 25px;
 }
 
-/* CARDS SUPERIORES */
 .top-cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -172,7 +154,7 @@ nav a:hover {
   background: white;
   border-radius: 20px;
   padding: 25px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .user {
@@ -263,7 +245,7 @@ nav a:hover {
   background: white;
   border-radius: 20px;
   padding: 25px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .disc-card h3 {
@@ -295,7 +277,6 @@ nav a:hover {
   transition: width 0.3s;
 }
 
-/* TAGS DE INTERESSE */
 .tags {
   display: flex;
   gap: 12px;
@@ -318,7 +299,6 @@ nav a:hover {
   color: white;
 }
 
-/* CARDS DE TRILHAS */
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -330,7 +310,7 @@ nav a:hover {
   background: white;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: transform 0.3s;
 }
 
@@ -378,37 +358,110 @@ nav a:hover {
   color: white;
 }
 
-/* RESPONSIVO */
 @media (max-width: 900px) {
   .container {
     flex-direction: column;
+    gap: 20px;
   }
+
   .sidebar {
     width: 100%;
   }
-  .top-cards {
+
+  .top-cards,
+  .cards {
     grid-template-columns: 1fr;
+  }
+
+  .user {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .stats {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .stats div {
+    width: 100%;
+    padding: 0;
+  }
+
+  .main-card,
+  .disc-card,
+  .card,
+  .perfil-card,
+  .card-feature,
+  .image-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .header,
+  .container,
+  .profile,
+  .top-cards,
+  .stats,
+  .tags,
+  .cards {
+    gap: 15px;
+  }
+
+  .header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .user img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .tags {
+    justify-content: center;
+  }
+
+  .card h3 {
+    font-size: 16px;
   }
 }
 
 @media (max-width: 480px) {
   .header {
-    flex-direction: column;
-    text-align: center;
-    gap: 15px;
+    padding: 15px 20px;
   }
-  
-  nav {
-    flex-wrap: wrap;
-    justify-content: center;
+
+  .sidebar,
+  .main-card,
+  .disc-card,
+  .card {
+    padding: 20px;
   }
-  
-  .stats {
-    flex-direction: column;
-    gap: 15px;
+
+  .user {
+    gap: 12px;
   }
-  
-  .stats div {
-    padding: 10px 0;
+
+  .btn,
+  .btn.full {
+    width: 100%;
+  }
+
+  .tags span {
+    font-size: 13px;
+  }
+
+  .profile h3 {
+    font-size: 18px;
   }
 }

@@ -1,45 +1,40 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Questionário - Trilha Acadêmica</title>
+    <link rel="stylesheet" href="css/trilha-global.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--cor-secundaria) 0%, var(--cor-primaria) 100%);
             min-height: 100vh;
             padding: 40px 20px;
         }
 
-        .container {
+        .questionario-container {
             max-width: 900px;
             margin: 0 auto;
         }
 
-        .header {
+        .header-questionario {
             text-align: center;
             margin-bottom: 30px;
         }
 
-        .header h1 {
+        .header-questionario h1 {
             color: white;
             font-size: 2rem;
             margin-bottom: 10px;
         }
 
-        .header p {
-            color: rgba(255,255,255,0.8);
+        .header-questionario p {
+            color: rgba(255, 255, 255, 0.8);
         }
 
         .progress-bar {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             height: 10px;
             margin-bottom: 30px;
@@ -47,24 +42,24 @@
         }
 
         .progress-fill {
-            background: #4CAF50;
+            background: white;
             height: 100%;
             width: 0%;
-            transition: width 0.3s ease;
+            transition: width 0.3s;
         }
 
-        .card {
+        .card-pergunta {
             background: white;
-            border-radius: 24px;
+            border-radius: var(--borda-raio-2xl);
             padding: 35px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            box-shadow: var(--sombra-forte);
             display: none;
             margin-bottom: 20px;
         }
 
-        .card.active {
+        .card-pergunta.active {
             display: block;
-            animation: fadeIn 0.5s ease;
+            animation: fadeIn 0.5s;
         }
 
         @keyframes fadeIn {
@@ -72,6 +67,7 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -79,16 +75,8 @@
         }
 
         .question-icon {
-            font-size: 3.5rem;
+            font-size: 3rem;
             margin-bottom: 15px;
-        }
-
-        .question-area {
-            font-size: 0.8rem;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
         }
 
         .question-text {
@@ -108,7 +96,7 @@
         .option {
             padding: 15px 20px;
             border: 2px solid #e5e7eb;
-            border-radius: 12px;
+            border-radius: var(--borda-raio-md);
             cursor: pointer;
             transition: all 0.3s;
             display: flex;
@@ -117,12 +105,12 @@
         }
 
         .option:hover {
-            border-color: #667eea;
+            border-color: var(--cor-secundaria);
             background: #f5f3ff;
         }
 
         .option.selected {
-            border-color: #667eea;
+            border-color: var(--cor-secundaria);
             background: #ede9fe;
         }
 
@@ -135,7 +123,7 @@
         }
 
         .option.selected .option-radio {
-            border-color: #667eea;
+            border-color: var(--cor-secundaria);
         }
 
         .option.selected .option-radio::after {
@@ -147,13 +135,7 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: #667eea;
-        }
-
-        .option-label {
-            flex: 1;
-            font-weight: 500;
-            font-size: 1rem;
+            background: var(--cor-secundaria);
         }
 
         .cursos-container {
@@ -161,16 +143,6 @@
             border-top: 1px solid #e5e7eb;
             padding-top: 20px;
             display: none;
-        }
-
-        .cursos-titulo {
-            font-size: 1rem;
-            color: #667eea;
-            margin-bottom: 15px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .cursos-grid {
@@ -196,7 +168,7 @@
         }
 
         .curso-item.selected {
-            background: #667eea;
+            background: var(--cor-secundaria);
             color: white;
         }
 
@@ -209,139 +181,78 @@
             opacity: 1;
         }
 
-        .nav-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 25px;
-        }
-
-        .btn {
-            padding: 12px 32px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-        }
-
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #5a67d8;
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: #e5e7eb;
-            color: #333;
-        }
-
-        .btn-secondary:hover {
-            background: #d1d5db;
-        }
-
-        .results {
-            background: white;
-            border-radius: 24px;
-            padding: 35px;
-            display: none;
-            margin-top: 20px;
-        }
-
-        .results h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-        }
-
-        .recomendacao-card {
-            background: #f9fafb;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-left: 4px solid #667eea;
-        }
-
-        .recomendacao-card h3 {
-            color: #667eea;
-            margin-bottom: 8px;
-            font-size: 1.2rem;
-        }
-
-        .recomendacao-meta {
-            display: flex;
-            gap: 15px;
-            margin: 10px 0;
-            font-size: 0.85rem;
-            color: #666;
-        }
-
-        .similaridade {
-            display: inline-block;
-            background: #4CAF50;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            margin-top: 10px;
-        }
-
-        .loading {
+        .loading-salvando {
             text-align: center;
             padding: 60px;
             color: white;
             font-size: 1.2rem;
+            display: none;
+        }
+
+        .btn-refazer {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--cor-laranja);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: var(--sombra-media);
+            z-index: 100;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         @media (max-width: 600px) {
-            .card {
+            .card-pergunta {
                 padding: 20px;
             }
+
             .question-text {
                 font-size: 1.1rem;
-            }
-            .option {
-                padding: 12px;
-            }
-            .cursos-grid {
-                grid-template-columns: 1fr;
-            }
-            .btn {
-                padding: 10px 20px;
             }
         }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="header">
+    <div class="questionario-container">
+        <div class="header-questionario">
             <h1>🎓 Escolha sua Trilha Acadêmica</h1>
             <p>Selecione as áreas de interesse e os cursos que você quer fazer</p>
         </div>
         <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
         </div>
-        <div id="loading" class="loading" style="display: none;">
-            <div>🔍 Salvando suas preferências...</div>
+        <div id="loading" class="loading-salvando">
+            <div>💾 Salvando suas preferências...</div>
         </div>
         <div id="questionarioContainer"></div>
-        <div id="results" class="results"></div>
     </div>
+
+    <button class="btn-refazer" id="btnRefazer" style="display: none;">🔄 Refazer Questionário</button>
 
     <script>
         const NODE_API = 'http://localhost:3000/api';
         const token = localStorage.getItem('token');
-        
+        let user = JSON.parse(localStorage.getItem('user') || '{}');
+
         if (!token) {
             window.location.href = 'login.html';
         }
 
         // =====================================================
-        // ÁREAS E CURSOS
+        // ÁREAS E CURSOS (VERSÃO CORRIGIDA - SEM UNDEFINED)
         // =====================================================
         const areas = [
             {
@@ -349,11 +260,10 @@
                 nome: "Tecnologia da Informação (TI)",
                 icone: "💻",
                 cursos: [
-                    "Desenvolvimento Web",
+                    "Desenvolvimento Web Front-end",
+                    "Desenvolvimento Web Back-end",
                     "Desenvolvimento Mobile",
                     "Banco de Dados",
-                    "Redes de Computadores",
-                    "Segurança da Informação",
                     "Cloud Computing",
                     "DevOps",
                     "Inteligência Artificial",
@@ -362,37 +272,74 @@
                 ]
             },
             {
-                id: "ciencias",
-                nome: "Ciências",
-                icone: "🔬",
+                id: "programacao",
+                nome: "Programação Avançada",
+                icone: "⚙️",
                 cursos: [
-                    "Biologia",
-                    "Química",
-                    "Física",
-                    "Matemática Aplicada",
-                    "Estatística",
-                    "Geologia",
-                    "Astronomia",
-                    "Oceanografia",
-                    "Genética",
-                    "Neurociência"
+                    "JavaScript/TypeScript",
+                    "Python para Backend",
+                    "Java Spring Boot",
+                    "C# .NET",
+                    "Algoritmos e Estruturas",
+                    "Design Patterns",
+                    "Clean Code",
+                    "Testes Automatizados",
+                    "API RESTful"
                 ]
             },
             {
-                id: "matematica",
-                nome: "Matemática",
-                icone: "📐",
+                id: "dados",
+                nome: "Ciência de Dados",
+                icone: "📊",
                 cursos: [
-                    "Álgebra",
-                    "Geometria",
-                    "Cálculo",
-                    "Trigonometria",
-                    "Probabilidade",
-                    "Matemática Financeira",
-                    "Matemática Discreta",
-                    "Teoria dos Números",
-                    "Equações Diferenciais",
-                    "Matemática Aplicada"
+                    "Python para Dados",
+                    "SQL Avançado",
+                    "Machine Learning",
+                    "Power BI",
+                    "Estatística Aplicada",
+                    "Data Visualization",
+                    "Análise de Dados"
+                ]
+            },
+            {
+                id: "design",
+                nome: "Design Digital",
+                icone: "🎨",
+                cursos: [
+                    "UX/UI Design",
+                    "Figma",
+                    "Design System",
+                    "Product Design",
+                    "Motion Design",
+                    "Design Thinking",
+                    "UX Research"
+                ]
+            },
+            {
+                id: "seguranca",
+                nome: "Segurança Digital",
+                icone: "🔒",
+                cursos: [
+                    "Ethical Hacking",
+                    "Segurança de Redes",
+                    "Criptografia",
+                    "DevSecOps",
+                    "OWASP Top 10",
+                    "Segurança em Nuvem"
+                ]
+            },
+            {
+                id: "marketing",
+                nome: "Marketing Digital",
+                icone: "📈",
+                cursos: [
+                    "SEO Avançado",
+                    "Google Ads",
+                    "Social Media",
+                    "Email Marketing",
+                    "Content Marketing",
+                    "Inbound Marketing",
+                    "Growth Hacking"
                 ]
             }
         ];
@@ -400,48 +347,120 @@
         let respostas = {};
         let cursosSelecionados = {};
         let areaAtual = 0;
+        let jaRespondeu = false;
 
         // Inicializar
         areas.forEach(area => {
-            respostas[area.id] = 0;
+            respostas[area.id] = null;  // null = não respondido ainda
             cursosSelecionados[area.id] = [];
         });
 
+        // =====================================================
+        // VERIFICAR SE JÁ RESPONDEU O QUESTIONÁRIO
+        // =====================================================
+        async function verificarQuestionarioRespondido() {
+            try {
+                console.log('🔍 Verificando se usuário já respondeu questionário...');
+
+                const response = await fetch(`${NODE_API}/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                console.log('📋 Dados do usuário:', data.user);
+
+                if (data.user && data.user.questionario_respondido === true) {
+                    jaRespondeu = true;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const isRefazendo = urlParams.get('refazer') === 'true';
+
+                    console.log('✅ Usuário JÁ respondeu. Refazendo?', isRefazendo);
+
+                    if (!isRefazendo) {
+                        // Mostrar alerta e perguntar
+                        const container = document.getElementById('questionarioContainer');
+                        if (container) {
+                            container.innerHTML = `
+                        <div class="alert-warning">
+                            <h2>📋 Você já respondeu o questionário!</h2>
+                            <p>Suas respostas anteriores estão sendo usadas para gerar recomendações.</p>
+                            <button class="btn-primario" onclick="refazerQuestionario()" style="margin-top: 15px;">
+                                🔄 Clique aqui para refazer
+                            </button>
+                            <button class="btn-outline" onclick="irParaDashboard()" style="margin-top: 15px; margin-left: 10px;">
+                                📊 Ir para o Dashboard
+                            </button>
+                        </div>
+                    `;
+                        }
+                        document.getElementById('btnRefazer').style.display = 'block';
+                        return false;
+                    } else {
+                        document.getElementById('btnRefazer').style.display = 'block';
+                        // Se está refazendo, permite responder novamente
+                        renderizarPerguntas();
+                        return true;
+                    }
+                }
+
+                console.log('📝 Usuário NÃO respondeu ainda. Mostrando questionário...');
+                renderizarPerguntas();
+                return true;
+
+            } catch (error) {
+                console.error('❌ Erro ao verificar:', error);
+                renderizarPerguntas();
+                return true;
+            }
+        }
+        function refazerQuestionario() {
+            if (confirm('⚠️ Isso vai APAGAR suas respostas atuais.\n\nDeseja realmente refazer o questionário?')) {
+                window.location.href = 'questionario.html?refazer=true';
+            }
+        }
+
+        function irParaDashboard() {
+            window.location.href = 'dashboard.html';
+        }
+
         function renderizarPerguntas() {
             const container = document.getElementById('questionarioContainer');
+
+            if (areas.length === 0) {
+                container.innerHTML = '<div class="alert-warning">Erro: Nenhuma área disponível</div>';
+                return;
+            }
+
             container.innerHTML = areas.map((area, idx) => `
-                <div class="card" data-pergunta="${idx}">
-                    <div class="question-icon">${area.icone}</div>
-                    <div class="question-area">ÁREA ${idx + 1} DE ${areas.length}</div>
-                    <div class="question-text">Você tem interesse na área de ${area.nome}?</div>
+                <div class="card-pergunta" data-pergunta="${idx}">
+                    <div class="question-icon">${area.icone || '📚'}</div>
+                    <div class="question-text">Você tem interesse na área de ${area.nome || '?'}?</div>
                     <div class="options" data-id="${area.id}">
-                        <div class="option" data-valor="1">
+                        <div class="option ${respostas[area.id] === 1 ? 'selected' : ''}" data-valor="1">
                             <div class="option-radio"></div>
                             <div class="option-label">✅ Sim, tenho interesse</div>
                         </div>
-                        <div class="option" data-valor="0">
+                        <div class="option ${respostas[area.id] === 0 ? 'selected' : ''}" data-valor="0">
                             <div class="option-radio"></div>
                             <div class="option-label">❌ Não tenho interesse</div>
                         </div>
                     </div>
-                    <div class="cursos-container" id="cursos-${area.id}">
-                        <div class="cursos-titulo">
-                            📚 Quais cursos te interessam em ${area.nome}?
-                        </div>
+                    <div class="cursos-container" id="cursos-${area.id}" style="display: ${respostas[area.id] === 1 ? 'block' : 'none'}">
+                        <div class="cursos-titulo" style="font-weight: 600; margin-bottom: 15px;">📚 Quais cursos te interessam em ${area.nome || '?'}?</div>
                         <div class="cursos-grid" id="grid-${area.id}"></div>
                     </div>
-                    <div class="nav-buttons">
-                        ${idx > 0 ? `<button class="btn btn-secondary" onclick="perguntaAnterior()">← Voltar</button>` : '<div></div>'}
-                        ${idx < areas.length - 1 ? 
-                            `<button class="btn btn-primary" onclick="proximaPergunta()">Próxima →</button>` : 
-                            `<button class="btn btn-primary" onclick="enviarRespostas()">Concluir →</button>`}
+                    <div class="nav-buttons" style="display: flex; justify-content: space-between; margin-top: 25px;">
+                        ${idx > 0 ? `<button class="btn-outline" onclick="perguntaAnterior()">← Voltar</button>` : '<div></div>'}
+                        ${idx < areas.length - 1 ?
+                    `<button class="btn-primario" onclick="proximaPergunta()">Próxima →</button>` :
+                    `<button class="btn-primario" onclick="enviarRespostas()">Concluir →</button>`}
                     </div>
                 </div>
             `).join('');
 
             // Adicionar eventos para as opções Sim/Não
             areas.forEach((area, idx) => {
-                const card = document.querySelector(`.card[data-pergunta="${idx}"]`);
+                const card = document.querySelector(`.card-pergunta[data-pergunta="${idx}"]`);
                 if (card) {
                     const options = card.querySelectorAll('.option');
                     options.forEach(opt => {
@@ -449,7 +468,7 @@
                             const valor = parseInt(opt.dataset.valor);
                             const areaId = area.id;
                             respostas[areaId] = valor;
-                            
+
                             const cursosContainer = document.getElementById(`cursos-${areaId}`);
                             if (valor === 1) {
                                 cursosContainer.style.display = 'block';
@@ -458,39 +477,41 @@
                                 cursosContainer.style.display = 'none';
                                 cursosSelecionados[areaId] = [];
                             }
-                            
+
                             options.forEach(o => o.classList.remove('selected'));
                             opt.classList.add('selected');
                         });
                     });
+
+                    // Carregar cursos se já estiver selecionado
+                    if (respostas[area.id] === 1) {
+                        carregarCursos(area);
+                    }
                 }
             });
-            
+
             mostrarPergunta(0);
         }
 
         function carregarCursos(area) {
             const grid = document.getElementById(`grid-${area.id}`);
-            if (!grid) return;
-            
+            if (!grid || !area.cursos) return;
+
             const selecionados = cursosSelecionados[area.id] || [];
-            
+
             grid.innerHTML = area.cursos.map(curso => `
-                <div class="curso-item ${selecionados.includes(curso) ? 'selected' : ''}" data-curso="${curso}">
+                <div class="curso-item ${selecionados.includes(curso) ? 'selected' : ''}" data-curso="${curso.replace(/'/g, "\\'")}">
                     <span>📖 ${curso}</span>
                     <span class="check">✓</span>
                 </div>
             `).join('');
-            
-            // Adicionar eventos aos cursos
-            const cursoItems = grid.querySelectorAll('.curso-item');
-            cursoItems.forEach(item => {
+
+            document.querySelectorAll(`#grid-${area.id} .curso-item`).forEach(item => {
                 item.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const curso = item.dataset.curso;
                     const selecionadosAtuais = cursosSelecionados[area.id] || [];
                     const index = selecionadosAtuais.indexOf(curso);
-                    
                     if (index === -1) {
                         selecionadosAtuais.push(curso);
                         item.classList.add('selected');
@@ -499,22 +520,16 @@
                         item.classList.remove('selected');
                     }
                     cursosSelecionados[area.id] = selecionadosAtuais;
-                    
-                    console.log(`📌 ${area.nome}: ${cursosSelecionados[area.id].length} cursos selecionados`);
                 });
             });
         }
 
         function mostrarPergunta(idx) {
-            const cards = document.querySelectorAll('.card');
+            const cards = document.querySelectorAll('.card-pergunta');
             cards.forEach((card, i) => {
-                if (i === idx) {
-                    card.classList.add('active');
-                } else {
-                    card.classList.remove('active');
-                }
+                if (i === idx) card.classList.add('active');
+                else card.classList.remove('active');
             });
-            
             const progress = ((idx + 1) / areas.length) * 100;
             document.getElementById('progressFill').style.width = `${progress}%`;
             areaAtual = idx;
@@ -522,7 +537,7 @@
 
         function proximaPergunta() {
             const areaId = areas[areaAtual].id;
-            if (respostas[areaId] === undefined) {
+            if (respostas[areaId] === null) {
                 alert('Por favor, selecione uma opção antes de continuar.');
                 return;
             }
@@ -538,30 +553,32 @@
         }
 
         async function enviarRespostas() {
-            const ultimaArea = areas[areas.length - 1].id;
-            if (respostas[ultimaArea] === undefined) {
-                alert('Por favor, responda todas as perguntas.');
-                return;
+            // Verificar se todas foram respondidas
+            for (const area of areas) {
+                if (respostas[area.id] === null) {
+                    alert(`Por favor, responda se você tem interesse em ${area.nome}`);
+                    const index = areas.findIndex(a => a.id === area.id);
+                    mostrarPergunta(index);
+                    return;
+                }
             }
 
             document.getElementById('questionarioContainer').style.display = 'none';
             document.getElementById('loading').style.display = 'block';
 
-            // Montar objeto com áreas de interesse e cursos selecionados
             const areasInteresse = [];
             for (const area of areas) {
                 if (respostas[area.id] === 1) {
                     areasInteresse.push({
                         area: area.nome,
-                        cursos: cursosSelecionados[area.id]
+                        cursos: cursosSelecionados[area.id] || []
                     });
                 }
             }
 
-            console.log('📤 Áreas e cursos selecionados:', areasInteresse);
+            console.log('📤 Enviando:', areasInteresse);
 
             try {
-                // Salvar respostas no backend
                 const saveResponse = await fetch(`${NODE_API}/recomendacao/respostas`, {
                     method: 'POST',
                     headers: {
@@ -570,28 +587,35 @@
                     },
                     body: JSON.stringify({ areas_interesse: areasInteresse })
                 });
-                
+
                 const saveData = await saveResponse.json();
-                console.log('📥 Resposta do save:', saveData);
-                
-                // Marcar questionário como respondido
-                await fetch(`${NODE_API}/auth/marcar-questionario`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
-                // Redirecionar para o dashboard
-                window.location.href = 'dashboard.html';
-                
+                console.log('📥 Resposta:', saveData);
+
+                if (saveData.success) {
+                    await fetch(`${NODE_API}/auth/marcar-questionario`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    window.location.href = 'dashboard.html';
+                } else {
+                    throw new Error(saveData.error || 'Erro ao salvar');
+                }
+
             } catch (error) {
                 console.error('❌ Erro:', error);
-                document.getElementById('loading').style.display = 'none';
                 alert('Erro ao salvar. Tente novamente.');
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('questionarioContainer').style.display = 'block';
             }
         }
 
+        // Refazer questionário
+        document.getElementById('btnRefazer')?.addEventListener('click', refazerQuestionario);
+
         // Iniciar
-        renderizarPerguntas();
+        verificarQuestionarioRespondido();
     </script>
 </body>
+
 </html>

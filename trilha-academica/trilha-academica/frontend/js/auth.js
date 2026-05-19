@@ -117,98 +117,47 @@ async function atualizarPerfil(dados) {
 }
 
 // =====================================================
-// RECUPERAÇÃO DE SENHA
+// RECOMENDAÇÕES
 // =====================================================
 
-async function solicitarRecuperacao(email) {
-    try {
-        const response = await fetch(`${API_URL}/recuperar-senha`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
-        });
-        const data = await response.json();
-        return { success: response.ok, message: data.message, error: data.error };
-    } catch (error) {
-        return { success: false, error: 'Erro ao conectar com o servidor' };
-    }
-}
-
-async function verificarEmail(codigo) {
-    try {
-        const response = await fetch(`${API_URL}/verificar-email`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ codigo })
-        });
-        const data = await response.json();
-        return { success: response.ok, message: data.message, error: data.error };
-    } catch (error) {
-        return { success: false, error: 'Erro ao conectar com o servidor' };
-    }
-}
-
-async function reenviarCodigo() {
-    try {
-        const response = await fetch(`${API_URL}/reenviar-codigo`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-        });
-        const data = await response.json();
-        return { success: response.ok, message: data.message, error: data.error };
-    } catch (error) {
-        return { success: false, error: 'Erro ao conectar com o servidor' };
-    }
-}
-
-async function verificar2FA(codigo) {
-    try {
-        const response = await fetch(`${API_URL}/verificar-2fa`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ codigo })
-        });
-        const data = await response.json();
-        return { success: response.ok, message: data.message, error: data.error };
-    } catch (error) {
-        return { success: false, error: 'Erro ao conectar com o servidor' };
-    }
-}
-
-async function verificarBackupCode(codigo) {
-    try {
-        const response = await fetch(`${API_URL}/verificar-backup`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ codigo })
-        });
-        const data = await response.json();
-        return { success: response.ok, message: data.message, error: data.error };
-    } catch (error) {
-        return { success: false, error: 'Erro ao conectar com o servidor' };
-    }
-}
-
-async function excluirConta(senha) {
+async function carregarPerguntas() {
     const token = localStorage.getItem('token');
-    if (!token) return { success: false, error: 'Não logado' };
-    
     try {
-        const response = await fetch(`${API_URL}/excluir-conta`, {
-            method: 'DELETE',
+        const response = await fetch(`${RECOMENDACAO_URL}/perguntas`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Erro ao carregar perguntas:', error);
+        return { perguntas: [] };
+    }
+}
+
+async function salvarRespostas(respostas) {
+    const token = localStorage.getItem('token');
+    try {
+        const response = await fetch(`${RECOMENDACAO_URL}/respostas`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ senha })
+            body: JSON.stringify(respostas)
         });
-        const data = await response.json();
-        if (response.ok) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-        }
-        return { success: response.ok, message: data.message, error: data.error };
+        return await response.json();
     } catch (error) {
-        return { success: false, error: 'Erro ao conectar com o servidor' };
+        return { success: false, error: 'Erro ao salvar respostas' };
+    }
+}
+
+async function obterRecomendacoes() {
+    const token = localStorage.getItem('token');
+    try {
+        const response = await fetch(`${RECOMENDACAO_URL}/recomendacoes`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return await response.json();
+    } catch (error) {
+        return { success: false, recomendacoes: [] };
     }
 }
