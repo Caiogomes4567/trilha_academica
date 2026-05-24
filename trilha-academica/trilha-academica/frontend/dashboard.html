@@ -266,9 +266,10 @@
     </div>
 
     <script>
-        const API_AUTH = 'http://localhost:3000/api/auth';
-        const API_REC = 'http://localhost:3000/api/recomendacao';
-        const API_PROGRESSO = 'http://localhost:3000/api/progresso';
+
+        const API_AUTH = 'https://trilha-academica-api.onrender.com/api/auth';
+        const API_REC = 'https://trilha-academica-api.onrender.com/api/recomendacao';
+        const API_PROGRESSO = 'https://trilha-academica-api.onrender.com/api/progresso';
         let token = localStorage.getItem('token');
         let user = JSON.parse(localStorage.getItem('user') || '{}');
         let proximoCursoNome = null;
