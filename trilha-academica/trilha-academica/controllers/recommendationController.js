@@ -2,7 +2,7 @@
 const axios = require('axios');
 const { pool } = require('../config/database');
 
-const PYTHON_API_URL = 'http://localhost:5000';
+const PYTHON_API_URL = process.env.PYTHON_API_URL || 'http://localhost:5000';
 
 // =====================================================
 // BUSCAR PERGUNTAS DO QUESTIONÁRIO
