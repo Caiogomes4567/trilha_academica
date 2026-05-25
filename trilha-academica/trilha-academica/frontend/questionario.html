@@ -358,61 +358,49 @@
         // =====================================================
         // VERIFICAR SE JÁ RESPONDEU O QUESTIONÁRIO
         // =====================================================
-        async function verificarQuestionarioRespondido() {
+                async function verificarQuestionarioRespondido() {
             try {
                 console.log('🔍 Verificando se usuário já respondeu questionário...');
-
+        
                 const response = await fetch(`${NODE_API}/auth/me`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const data = await response.json();
-
+        
                 console.log('📋 Dados do usuário:', data.user);
-
-                if (data.user && data.user.questionario_respondido === true) {
+        
+                // CORREÇÃO: Aceita tanto true quanto 1
+                const jaRespondeuQuest = (data.user && (data.user.questionario_respondido === true || data.user.questionario_respondido === 1));
+                
+                if (jaRespondeuQuest) {
                     jaRespondeu = true;
                     const urlParams = new URLSearchParams(window.location.search);
                     const isRefazendo = urlParams.get('refazer') === 'true';
-
+        
                     console.log('✅ Usuário JÁ respondeu. Refazendo?', isRefazendo);
-
+        
                     if (!isRefazendo) {
-                        // Mostrar alerta e perguntar
-                        const container = document.getElementById('questionarioContainer');
-                        if (container) {
-                            container.innerHTML = `
-                        <div class="alert-warning">
-                            <h2>📋 Você já respondeu o questionário!</h2>
-                            <p>Suas respostas anteriores estão sendo usadas para gerar recomendações.</p>
-                            <button class="btn-primario" onclick="refazerQuestionario()" style="margin-top: 15px;">
-                                🔄 Clique aqui para refazer
-                            </button>
-                            <button class="btn-outline" onclick="irParaDashboard()" style="margin-top: 15px; margin-left: 10px;">
-                                📊 Ir para o Dashboard
-                            </button>
-                        </div>
-                    `;
-                        }
-                        document.getElementById('btnRefazer').style.display = 'block';
+                        // REDIRECIONA DIRETO PARA O DASHBOARD
+                        window.location.href = 'dashboard.html';
                         return false;
                     } else {
                         document.getElementById('btnRefazer').style.display = 'block';
-                        // Se está refazendo, permite responder novamente
                         renderizarPerguntas();
                         return true;
                     }
                 }
-
+        
                 console.log('📝 Usuário NÃO respondeu ainda. Mostrando questionário...');
                 renderizarPerguntas();
                 return true;
-
+        
             } catch (error) {
                 console.error('❌ Erro ao verificar:', error);
                 renderizarPerguntas();
                 return true;
             }
         }
+        
         function refazerQuestionario() {
             if (confirm('⚠️ Isso vai APAGAR suas respostas atuais.\n\nDeseja realmente refazer o questionário?')) {
                 window.location.href = 'questionario.html?refazer=true';
