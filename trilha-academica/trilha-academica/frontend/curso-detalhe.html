@@ -7,161 +7,184 @@
     <title>Detalhes do Curso - Trilha Acadêmica</title>
     <link rel="stylesheet" href="css/trilha-global.css">
     <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 40px 20px;
+    }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
 
-        .curso-card {
-            background: white;
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
+    .curso-card {
+        background: white;
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        color: #1f2937;
+    }
 
-        .curso-icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
+    .curso-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
 
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-        }
+    h1 {
+        color: #111827 !important;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: 700;
+    }
 
-        .info {
-            background: #f3f4f6;
-            padding: 20px;
-            border-radius: 16px;
-            margin: 20px 0;
-        }
+    h3 {
+        color: #111827 !important;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 15px;
+    }
 
-        .info-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #e5e7eb;
-        }
+    .info {
+        background: #f3f4f6;
+        padding: 20px;
+        border-radius: 16px;
+        margin: 20px 0;
+    }
 
-        .info-item:last-child {
-            border-bottom: none;
-        }
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
 
-        .topicos {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 20px 0;
-        }
+    .info-item:last-child {
+        border-bottom: none;
+    }
 
-        .topico {
-            background: #e0e7ff;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-        }
+    .info-item span:first-child {
+        color: #6b7280;
+        font-weight: 500;
+    }
 
-        .btn-concluir {
-            background: #16a34a;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            width: 100%;
-            margin-top: 20px;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
+    .info-item span:last-child {
+        color: #111827;
+        font-weight: 600;
+    }
 
-        .btn-concluir:hover {
-            background: #15803d;
-            transform: translateY(-2px);
-        }
+    .topicos {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 20px 0;
+    }
 
-        .btn-concluir:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-        }
+    .topico {
+        background: #e0e7ff;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        color: #1e3a8a;
+        font-weight: 500;
+    }
 
-        .btn-concluir.concluido {
-            background: #9ca3af;
-        }
+    .btn-concluir {
+        background: #16a34a;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        width: 100%;
+        margin-top: 20px;
+        font-size: 16px;
+        transition: all 0.3s;
+    }
 
-        .mensagem-sucesso {
-            background: #d1fae5;
-            color: #065f46;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            display: none;
-            text-align: center;
-        }
+    .btn-concluir:hover {
+        background: #15803d;
+        transform: translateY(-2px);
+    }
 
-        .proximo-curso {
-            margin-top: 30px;
-            padding: 20px;
-            background: #fef3c7;
-            border-radius: 16px;
-            display: none;
-            text-align: center;
-        }
+    .btn-concluir:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+    }
 
-        .proximo-curso h4 {
-            color: #92400e;
-            margin-bottom: 10px;
-        }
+    .btn-concluir.concluido {
+        background: #9ca3af;
+    }
 
-        .btn-proximo {
-            background: #f59e0b;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
+    .mensagem-sucesso {
+        background: #d1fae5;
+        color: #065f46;
+        padding: 15px;
+        border-radius: 10px;
+        margin-top: 20px;
+        display: none;
+        text-align: center;
+    }
 
-        .btn-voltar {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-top: 20px;
-            width: 100%;
-        }
+    .proximo-curso {
+        margin-top: 30px;
+        padding: 20px;
+        background: #fef3c7;
+        border-radius: 16px;
+        display: none;
+        text-align: center;
+    }
 
-        .btn-voltar:hover {
-            background: #5a67d8;
-        }
+    .proximo-curso h4 {
+        color: #92400e;
+        margin-bottom: 10px;
+    }
 
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: white;
-        }
+    .btn-proximo {
+        background: #f59e0b;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
 
-        .conquista-badge {
-            display: inline-block;
-            background: #fbbf24;
-            color: #92400e;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            margin-top: 10px;
-        }
-    </style>
+    .btn-voltar {
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .btn-voltar:hover {
+        background: #5a67d8;
+    }
+
+    .loading {
+        text-align: center;
+        padding: 40px;
+        color: white;
+    }
+
+    .conquista-badge {
+        display: inline-block;
+        background: #fbbf24;
+        color: #92400e;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        margin-top: 10px;
+    }
+</style>
+
+    
 </head>
 
 <body>
