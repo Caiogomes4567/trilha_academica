@@ -24,24 +24,45 @@ router.post('/concluir-curso', authMiddleware, async (req, res) => {
         if (jaConcluiu.length > 0) {
             return res.json({ success: false, message: 'Voce ja concluiu este curso!' });
         }
-
-        await pool.query('INSERT INTO cursos_concluidos (user_id, curso_nome, trilha_nome, horas_dedicas, data_conclusao) VALUES (?, ?, ?, ?, NOW())', [userId, curso_nome, trilha_nome, horas_dedicadas || 0]);
-        await pool.query('UPDATE progresso_usuario SET pontos_total = pontos_total + 100, horas_estudadas = horas_estudadas + ?, ultimo_acesso = NOW() WHERE user_id = ?', [horas_dedicadas || 0, userId]);
-
+        
+        await pool.query(
+            'INSERT INTO cursos_concluidos (user_id, curso_nome, trilha_nome, horas_dedicadas, data_conclusao) VALUES (?, ?, ?, ?, NOW())', 
+            [userId, curso_nome, trilha_nome, horas_dedicadas || 0]
+        );
+        
+        await pool.query(
+            'UPDATE progresso_usuario SET pontos_total = pontos_total + 100, horas_estudadas = horas_estudadas + ?, ultimo_acesso = NOW() WHERE user_id = ?', 
+            [horas_dedicadas || 0, userId]
+        );
+        
         const [cursosCount] = await pool.query('SELECT COUNT(*) as total FROM cursos_concluidos WHERE user_id = ?', [userId]);
         const totalCursos = cursosCount[0].total;
         let conquista = null;
+        let pontosBonus = 0;
 
-        if (totalCursos === 1) { conquista = "Primeiro Passo!"; }
-        else if (totalCursos === 3) { conquista = "Aprendiz Dedicado"; }
-        else if (totalCursos === 5) { conquista = "Mestre dos Cursos"; }
-
-        if (conquista) {
-            await pool.query('INSERT INTO conquistas (user_id, conquista_nome, conquista_descricao, pontos_ganhos) VALUES (?, ?, ?, ?)', [userId, conquista, "Concluiu " + totalCursos + " cursos!", 50]);
-            await pool.query('UPDATE progresso_usuario SET pontos_total = pontos_total + 50 WHERE user_id = ?', [userId]);
+        if (totalCursos === 1) { 
+            conquista = "Primeiro Passo!"; 
+            pontosBonus = 50;
+        } else if (totalCursos === 3) { 
+            conquista = "Aprendiz Dedicado"; 
+            pontosBonus = 50;
+        } else if (totalCursos === 5) { 
+            conquista = "Mestre dos Cursos"; 
+            pontosBonus = 50;
+        } else if (totalCursos === 10) { 
+            conquista = "Mestre Absoluto!"; 
+            pontosBonus = 100;
         }
 
-        res.json({ success: true, message: "Curso concluído!", conquista: conquista, pontos_ganhos: 100 });
+        if (conquista) {
+            await pool.query(
+                'INSERT INTO conquistas (user_id, conquista_nome, conquista_descricao, pontos_ganhos, data_obtencao) VALUES (?, ?, ?, ?, NOW())', 
+                [userId, conquista, "Concluiu " + totalCursos + " cursos!", pontosBonus]
+            );
+            await pool.query('UPDATE progresso_usuario SET pontos_total = pontos_total + ? WHERE user_id = ?', [pontosBonus, userId]);
+        }
+
+        res.json({ success: true, message: "Curso concluído!", conquista: conquista, pontos_ganhos: 100 + pontosBonus });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erro ao marcar curso' });
@@ -89,7 +110,7 @@ router.get('/meu-progresso', authMiddleware, async (req, res) => {
 
         const [progresso] = await pool.query('SELECT * FROM progresso_usuario WHERE user_id = ?', [userId]);
         const [cursos] = await pool.query('SELECT * FROM cursos_concluidos WHERE user_id = ? ORDER BY data_conclusao DESC', [userId]);
-        const [conquistas] = await pool.query('SELECT * FROM conquistas WHERE user_id = ? ORDER BY data_conquista DESC', [userId]);
+        const [conquistas] = await pool.query('SELECT * FROM conquistas WHERE user_id = ? ORDER BY data_obtencao DESC', [userId]); // CORRIGIDO
 
         res.json({ success: true, progresso: progresso[0] || { pontos_total: 0, horas_estudadas: 0, nivel_atual: 1 }, cursos_concluidos: cursos, conquistas: conquistas });
     } catch (error) {
